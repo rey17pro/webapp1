@@ -7,119 +7,84 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        :root { --maims-maroon: #800000; --maims-gold: #FFD700; }
-        body { background: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .bg-maims { background: var(--maims-maroon); color: white; border-bottom: 3px solid var(--maims-gold); }
-        .btn-maims { background: var(--maims-maroon); color: white; transition: 0.3s; }
-        .btn-maims:hover { background: #5a0000; color: var(--maims-gold); }
-        .page { display: none; min-height: 80vh; }
+        :root { --maims-maroon: #800000; }
+        body { background: #f8f9fa; }
+        .bg-maims { background: var(--maims-maroon); color: white; }
+        .page { display: none; padding: 20px 0; }
         .active { display: block; }
-        .vlog-card { border: none; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); background: white; }
-        .vlog-frame { aspect-ratio: 16/9; width: 100%; border: none; }
-        .admin-item { background: white; border-radius: 8px; margin-bottom: 10px; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .vlog-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        iframe { width: 100%; aspect-ratio: 16/9; border: none; }
     </style>
 </head>
 <body>
 
-<nav class="navbar navbar-dark bg-maims shadow-sm mb-4">
+<nav class="navbar navbar-dark bg-maims shadow-sm">
     <div class="container">
-        <a class="navbar-brand fw-bold" href="#" onclick="showPage('home')">🎓 MAIMS VLOGS</a>
+        <span class="navbar-brand fw-bold" style="cursor:pointer" onclick="window.location.reload()">MAIMS VLOGS</span>
         <button id="navBtn" class="btn btn-outline-light btn-sm" onclick="showPage('login')">Admin Login</button>
     </div>
 </nav>
 
-<div class="container">
-    
-    <section id="home" class="page active">
-        <div class="text-center mb-5">
-            <h1 class="fw-bold">Campus Life at MAIMS</h1>
-            <p class="text-muted">Explore the latest events, fests, and student stories</p>
-        </div>
-        <div id="vlogGrid" class="row g-4">
-            </div>
-    </section>
+<div class="container mt-4">
+    <div id="home" class="page active">
+        <h2 class="text-center mb-4">Latest Vlogs</h2>
+        <div id="vlogGrid" class="row"></div>
+    </div>
 
-    <section id="login" class="page mt-5">
+    <div id="login" class="page">
         <div class="row justify-content-center">
-            <div class="col-md-4">
-                <div class="card p-4 shadow-lg border-0">
-                    <h4 class="text-center mb-4">Admin Portal</h4>
-                    <div class="mb-3">
-                        <label class="form-label">Email</label>
-                        <input type="email" id="email" class="form-control" placeholder="admin@maims.edu">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Password</label>
-                        <input type="password" id="password" class="form-control" placeholder="••••••••">
-                    </div>
-                    <button class="btn btn-maims w-100" onclick="handleLogin()">Sign In</button>
-                </div>
+            <div class="col-md-4 card p-4 shadow">
+                <h4 class="text-center">Admin Access</h4>
+                <input type="email" id="email" class="form-control my-2" placeholder="Email">
+                <input type="password" id="password" class="form-control my-2" placeholder="Password">
+                <button class="btn btn-danger w-100" onclick="handleLogin()">Sign In</button>
+                <button class="btn btn-link w-100 mt-2" onclick="showPage('home')">Back</button>
             </div>
         </div>
-    </section>
+    </div>
 
-    <section id="admin" class="page">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h3>CMS Dashboard</h3>
-            <button class="btn btn-danger btn-sm" onclick="handleLogout()">Logout</button>
+    <div id="admin" class="page">
+        <div class="d-flex justify-content-between mb-4">
+            <h3>Admin Dashboard</h3>
+            <button class="btn btn-secondary btn-sm" onclick="handleLogout()">Logout</button>
         </div>
-        
-        <div class="card p-4 mb-4 border-0 shadow-sm">
-            <h5>Post New Content</h5>
-            <div class="row g-3">
-                <div class="col-md-5">
-                    <input type="text" id="vTitle" class="form-control" placeholder="Vlog Title (e.g. Annual Fest 2024)">
-                </div>
-                <div class="col-md-5">
-                    <input type="text" id="vUrl" class="form-control" placeholder="YouTube Link (e.g. https://youtu.be/...)">
-                </div>
-                <div class="col-md-2">
-                    <button class="btn btn-success w-100 fw-bold" onclick="addVlog()">Publish</button>
-                </div>
-            </div>
+        <div class="card p-3 mb-4">
+            <h5>Add New Vlog</h5>
+            <input type="text" id="vTitle" class="form-control mb-2" placeholder="Title">
+            <input type="text" id="vUrl" class="form-control mb-2" placeholder="YouTube Link">
+            <button class="btn btn-success" onclick="addVlog()">Publish to Site</button>
         </div>
-
-        <h5>Manage Existing Vlogs</h5>
         <div id="adminList"></div>
-    </section>
-
+    </div>
 </div>
 
 <script>
-    // --- INTEGRATED SUPABASE CONFIG ---
     const SUPABASE_URL = "https://nplghkofeizbzsysqeew.supabase.co"; 
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wbGdoa29mZWl6YnpzeXNxZWV3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAwMzA0MzAsImV4cCI6MjA4NTYwNjQzMH0.D3mzyC4zsRwRMpWXdCulRqUwoPAKBQLFjt--sRZagC0";
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // --- VIEW CONTROLLER ---
-    function showPage(id) {
+    // FIX: Function to show pages
+    function showPage(pageId) {
+        console.log("Showing page: " + pageId);
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        if(id === 'home') loadPublicVlogs();
+        document.getElementById(pageId).classList.add('active');
     }
 
-    // --- AUTHENTICATION ---
     async function handleLogin() {
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        
-        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-        
-        if (error) {
-            alert("Login Failed: " + error.message);
-        } else {
-            alert("Welcome Admin!");
-            checkUser();
-        }
+        const e = document.getElementById('email').value;
+        const p = document.getElementById('password').value;
+        const { error } = await supabase.auth.signInWithPassword({ email: e, password: p });
+        if (error) alert("Error: " + error.message);
+        else checkStatus();
     }
 
     async function handleLogout() {
         await supabase.auth.signOut();
-        location.reload();
+        window.location.reload();
     }
 
-    async function checkUser() {
+    async function checkStatus() {
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
             showPage('admin');
@@ -127,80 +92,14 @@
             document.getElementById('navBtn').onclick = () => showPage('admin');
             loadAdminList();
         } else {
-            loadPublicVlogs();
+            loadVlogs();
         }
     }
 
-    // --- DATA MANAGEMENT ---
-    async function loadPublicVlogs() {
-        const { data, error } = await supabase.from('vlogs').select('*').order('created_at', { ascending: false });
-        const grid = document.getElementById('vlogGrid');
-        
+    async function loadVlogs() {
+        const { data } = await supabase.from('vlogs').select('*');
         if (data) {
-            grid.innerHTML = data.map(v => `
+            document.getElementById('vlogGrid').innerHTML = data.map(v => `
                 <div class="col-md-6 col-lg-4">
-                    <div class="vlog-card h-100">
-                        <iframe class="vlog-frame" src="https://www.youtube.com/embed/${v.youtube_id}" allowfullscreen></iframe>
-                        <div class="p-3">
-                            <h6 class="mb-1 fw-bold">${v.title}</h6>
-                            <small class="text-muted">Published: ${new Date(v.created_at).toLocaleDateString()}</small>
-                        </div>
-                    </div>
-                </div>`).join('');
-        }
-    }
-
-    async function addVlog() {
-        const title = document.getElementById('vTitle').value;
-        const url = document.getElementById('vUrl').value;
-
-        if(!title || !url) return alert("Please fill both fields");
-
-        // Extract ID from different YouTube URL formats
-        let vidId = "";
-        try {
-            if (url.includes('v=')) vidId = url.split('v=')[1].split('&')[0];
-            else vidId = url.split('/').pop().split('?')[0];
-        } catch(e) { return alert("Invalid YouTube URL format"); }
-
-        const { error } = await supabase.from('vlogs').insert([{ title, youtube_id: vidId }]);
-        
-        if (error) {
-            alert("Error: " + error.message);
-        } else {
-            alert("Vlog Published Successfully!");
-            document.getElementById('vTitle').value = '';
-            document.getElementById('vUrl').value = '';
-            loadAdminList();
-        }
-    }
-
-    async function loadAdminList() {
-        const { data } = await supabase.from('vlogs').select('*').order('created_at', { ascending: false });
-        const list = document.getElementById('adminList');
-        if (data) {
-            list.innerHTML = data.map(v => `
-                <div class="admin-item shadow-sm">
-                    <div>
-                        <strong>${v.title}</strong><br>
-                        <small class="text-muted">ID: ${v.youtube_id}</small>
-                    </div>
-                    <button class="btn btn-outline-danger btn-sm" onclick="deleteVlog('${v.id}')">Delete</button>
-                </div>`).join('');
-        }
-    }
-
-    async function deleteVlog(id) {
-        if(confirm("Are you sure you want to delete this vlog?")) {
-            const { error } = await supabase.from('vlogs').delete().eq('id', id);
-            if (error) alert(error.message);
-            else loadAdminList();
-        }
-    }
-
-    // Initial check on load
-    checkUser();
-</script>
-
-</body>
-</html>
+                    <div class="vlog-card">
+                        <iframe src="
