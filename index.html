@@ -3,112 +3,253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MAIMS Vlog Portal</title>
+    <title>MAIMS Community Portal</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         :root { --maims-maroon: #800000; --maims-gold: #FFD700; }
-        body { background: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; padding-bottom: 50px; }
         
-        /* Navbar Styling */
-        .navbar { background: var(--maims-maroon); border-bottom: 4px solid var(--maims-gold); }
-        .navbar-brand { font-weight: bold; color: white !important; letter-spacing: 1px; }
+        /* Navigation Styling */
+        .navbar { background: var(--maims-maroon); padding: 15px 0; border-bottom: 4px solid var(--maims-gold); }
+        .navbar-brand { color: white !important; font-weight: bold; letter-spacing: 1px; }
+        .nav-link { color: rgba(255,255,255,0.8) !important; font-weight: 500; cursor: pointer; transition: 0.3s; margin: 0 5px; }
+        .nav-link:hover, .nav-link.active-tab { color: var(--maims-gold) !important; font-weight: bold; }
 
-        /* Text Section Styling */
-        .content-box {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 30px;
-            border-left: 5px solid var(--maims-maroon);
-        }
+        /* Page Handling */
+        .page-section { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .active-section { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Video Card Styling */
-        .vlog-card {
-            background: white;
-            border: none;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .vlog-card:hover { transform: translateY(-5px); }
-        iframe { width: 100%; aspect-ratio: 16/9; border: none; }
-        .card-body { padding: 15px; text-align: center; }
-        .card-title { font-weight: 600; color: #333; font-size: 1.1rem; }
+        /* Content Cards */
+        .content-card { background: white; border-radius: 12px; border: none; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.08); margin-bottom: 30px; }
+        .card-img-top { height: 250px; object-fit: cover; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0; }
+
+        /* Journey Timeline */
+        .timeline-item { border-left: 4px solid var(--maims-maroon); padding-left: 20px; margin-bottom: 30px; position: relative; }
+        .timeline-item::before { content: ''; position: absolute; left: -10px; top: 0; width: 16px; height: 16px; background: var(--maims-gold); border-radius: 50%; }
+        
+        /* Join Us Button */
+        .btn-maims { background: var(--maims-maroon); color: white; border: none; padding: 10px 25px; }
+        .btn-maims:hover { background: #5a0000; color: white; }
     </style>
 </head>
 <body>
 
-<nav class="navbar shadow-sm mb-4">
-    <div class="container justify-content-center">
-        <span class="navbar-brand fs-3">🎓 MAIMS VLOGS</span>
+<nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+    <div class="container">
+        <a class="navbar-brand" href="#" onclick="switchTab('home')">🎓 MAIMS PORTAL</a>
+        <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" onclick="switchTab('who-we-are')">Who We Are</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="switchTab('our-journey')">Our Journey</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="switchTab('updates')">Updates (Vlogs)</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="switchTab('your-voice')">Your Voice</a></li>
+                <li class="nav-item"><a class="nav-link" onclick="switchTab('join-us')">Join Us</a></li>
+            </ul>
+        </div>
     </div>
 </nav>
 
-<div class="container">
+<div class="container mt-4">
 
-    <div class="content-box">
-        <h2 class="text-dark mb-3">Welcome to Our Campus</h2>
-        
-        <p class="lead text-muted">
-            Welcome to the official vlog portal of MAIMS. Here you can find the latest coverage of our fests, 
-            academic events, and student life. 
-        </p>
-        <p>
-            Explore the gallery below to see what our students have been up to this semester. 
-            (You can delete this text and paste your own introduction here).
-        </p>
+    <div id="home" class="page-section active-section">
+        <div class="text-center py-5">
+            <h1 class="display-4 fw-bold text-dark" id="home-title">Loading...</h1>
+            <p class="lead text-muted mb-4" id="home-desc">Loading...</p>
+            <img id="home-img" src="" class="img-fluid rounded shadow-lg mb-4" style="max-height: 400px; width: 100%; object-fit: cover;">
+            <br>
+            <button class="btn btn-maims btn-lg mt-3" onclick="switchTab('updates')">Watch Latest Vlogs</button>
         </div>
+    </div>
 
-    <h3 class="mb-4 ps-2 border-start border-4 border-danger">Latest Videos</h3>
-    <div id="video-gallery" class="row g-4">
-        </div>
+    <div id="who-we-are" class="page-section">
+        <h2 class="mb-4 border-bottom pb-2 border-danger">Who We Are</h2>
+        <div id="who-content" class="row">
+            </div>
+    </div>
 
-    <footer class="text-center mt-5 py-4 text-muted">
-        <small>© 2024 MAIMS Vlog Portal</small>
-    </footer>
+    <div id="our-journey" class="page-section">
+        <h2 class="mb-4 border-bottom pb-2 border-danger">Our Journey</h2>
+        <div id="journey-list" class="ms-2">
+            </div>
+    </div>
 
-</div>
+    <div id="updates" class="page-section">
+        <h2 class="mb-4 border-bottom pb-2 border-danger">Updates & Vlogs</h2>
+        <div id="updates-grid" class="row g-4">
+            </div>
+    </div>
 
-<script>
-    // --- EDIT YOUR VIDEOS HERE ---
-    // Just copy a line, paste it, and change the Title and ID.
-    const videos = [
-        
-        { 
-            title: "MAIMS Annual Fest 2024", 
-            id: "dQw4w9WgXcQ"  // The code at the end of the YouTube link
-        },
-
-        { 
-            title: "Campus Tour & Facilities", 
-            id: "zpOULjyy-n8" 
-        },
-
-        { 
-            title: "Fresher's Party Highlights", 
-            id: "jNQXAC9IVRw" 
-        },
-
-        // Add more videos here by copying the block above!
-        
-    ];
-    // -----------------------------
-
-    // This loop puts the videos on the page. You don't need to touch this.
-    const gallery = document.getElementById('video-gallery');
-    gallery.innerHTML = videos.map(video => `
-        <div class="col-md-6 col-lg-4">
-            <div class="vlog-card h-100">
-                <iframe src="https://www.youtube.com/embed/${video.id}" allowfullscreen></iframe>
-                <div class="card-body">
-                    <div class="card-title">${video.title}</div>
+    <div id="your-voice" class="page-section">
+        <h2 class="mb-4 border-bottom pb-2 border-danger">Your Voice</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card p-4 shadow-sm">
+                    <p class="text-muted">We value your feedback! Share your thoughts or suggestions for the next vlog.</p>
+                    <div class="mb-3">
+                        <label class="form-label">Your Name (Optional)</label>
+                        <input type="text" class="form-control" placeholder="Student Name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message / Suggestion</label>
+                        <textarea class="form-control" rows="4" placeholder="I think we should cover..."></textarea>
+                    </div>
+                    <button class="btn btn-maims w-100" onclick="alert('Thank you! Your feedback has been recorded locally.')">Submit Feedback</button>
                 </div>
             </div>
         </div>
-    `).join('');
-</script>
+    </div>
 
+    <div id="join-us" class="page-section">
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800" class="img-fluid rounded shadow-sm">
+            </div>
+            <div class="col-md-6">
+                <h2 class="mb-3">Join the Team</h2>
+                <div id="join-text"></div>
+                <button class="btn btn-maims mt-3" onclick="window.location.href='mailto:contact@maims.edu'">Apply Now via Email</button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    
+    // =========================================================
+    // 🟢 CONTROL CENTER - EDIT YOUR CONTENT HERE
+    // =========================================================
+
+    // 1. HOME PAGE TEXT & MAIN IMAGE
+    const homeData = {
+        title: "Welcome to MAIMS Portal",
+        desc: "The official hub for student activities, vlogs, and community updates. Discover what makes our campus unique.",
+        image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=1000" // Change this URL to your college photo
+    };
+
+    // 2. WHO WE ARE (Add paragraphs, images, or Youtube video IDs)
+    const whoWeAreData = [
+        {
+            title: "Our Mission",
+            text: "To provide a platform where students can showcase their talent, stay updated with campus news, and connect with the faculty.",
+            image: "https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=600",
+            youtubeID: "" // Leave empty if you want to show the image above
+        },
+        {
+            title: "Student Council",
+            text: "Run by students, for students. We are a team of dedicated individuals working to make campus life vibrant.",
+            image: "",
+            youtubeID: "dQw4w9WgXcQ" // Put a YouTube ID here to show a video instead of an image
+        }
+    ];
+
+    // 3. OUR JOURNEY (Timeline items)
+    const journeyData = [
+        { year: "2020", title: "The Beginning", text: "We started as a small group of 5 students wanting to document campus life." },
+        { year: "2022", title: "First Fest Coverage", text: "Our team covered the annual fest officially for the first time, reaching 10k views." },
+        { year: "2024", title: "Going Digital", text: "Launched this official portal to connect everyone digitally." }
+    ];
+
+    // 4. UPDATES & VLOGS (Your Video Gallery)
+    const updatesData = [
+        { title: "Annual Fest Highlights 2024", youtubeID: "zpOULjyy-n8", date: "Feb 2, 2024" },
+        { title: "Campus Tour - New Block", youtubeID: "jNQXAC9IVRw", date: "Jan 15, 2024" },
+        { title: "Freshers Party Teaser", youtubeID: "dQw4w9WgXcQ", date: "Dec 20, 2023" }
+    ];
+
+    // 5. JOIN US TEXT
+    const joinText = `
+        <p>Are you passionate about <strong>Videography, Editing, or Content Writing?</strong></p>
+        <p>We are looking for creative minds to join our core committee. If you want to be the voice of MAIMS, this is your chance.</p>
+        <ul>
+            <li>Gain exposure and experience.</li>
+            <li>Get official certificates.</li>
+            <li>Cover exclusive events backstage.</li>
+        </ul>
+    `;
+
+    // =========================================================
+    // 🔴 DO NOT TOUCH THE CODE BELOW (It loads your data)
+    // =========================================================
+
+    // Load Home
+    document.getElementById('home-title').innerText = homeData.title;
+    document.getElementById('home-desc').innerText = homeData.desc;
+    document.getElementById('home-img').src = homeData.image;
+
+    // Load Who We Are
+    const whoContainer = document.getElementById('who-content');
+    whoWeAreData.forEach(item => {
+        let mediaHTML = item.youtubeID 
+            ? `<div class="video-container"><iframe src="https://www.youtube.com/embed/${item.youtubeID}" allowfullscreen></iframe></div>`
+            : `<img src="${item.image}" class="card-img-top" alt="Image">`;
+
+        whoContainer.innerHTML += `
+        <div class="col-md-6">
+            <div class="content-card">
+                ${mediaHTML}
+                <div class="p-4">
+                    <h4>${item.title}</h4>
+                    <p class="text-muted">${item.text}</p>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    // Load Journey
+    const journeyContainer = document.getElementById('journey-list');
+    journeyData.forEach(item => {
+        journeyContainer.innerHTML += `
+        <div class="timeline-item">
+            <span class="badge bg-danger mb-2">${item.year}</span>
+            <h5>${item.title}</h5>
+            <p class="text-muted">${item.text}</p>
+        </div>`;
+    });
+
+    // Load Updates (Vlogs)
+    const updatesContainer = document.getElementById('updates-grid');
+    updatesData.forEach(vlog => {
+        updatesContainer.innerHTML += `
+        <div class="col-md-4">
+            <div class="content-card h-100">
+                <div class="video-container">
+                    <iframe src="https://www.youtube.com/embed/${vlog.youtubeID}" allowfullscreen></iframe>
+                </div>
+                <div class="p-3">
+                    <h6 class="fw-bold mb-1">${vlog.title}</h6>
+                    <small class="text-muted"><i class="far fa-clock"></i> ${vlog.date}</small>
+                </div>
+            </div>
+        </div>`;
+    });
+
+    // Load Join Us
+    document.getElementById('join-text').innerHTML = joinText;
+
+    // Tab Switching Logic
+    function switchTab(tabId) {
+        // Hide all sections
+        document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active-section'));
+        // Remove active class from nav links
+        document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active-tab'));
+        
+        // Show selected section
+        document.getElementById(tabId).classList.add('active-section');
+        
+        // Highlight current nav link (simple logic for demo)
+        // Note: For a strictly single page, this visual feedback is sufficient
+    }
+
+</script>
 </body>
 </html>
